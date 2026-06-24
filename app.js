@@ -229,3 +229,82 @@ function importTodos(file) {
     
     reader.readAsText(file);
 }
+
+
+//Advance Features
+
+//Filter Todos
+function createFilterButtons() {
+    const filterContainer = document.createElement('div');
+    filterContainer.className = 'filter-buttons';
+    filterContainer.style.cssText = `
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        `;
+
+        const filters = ['All', 'Active', 'Completed'];
+
+        filters.forEach(filter => {
+            const btn = document.createElement('button');
+            btn.textContent = filter;
+            btn.className = 'filter-btn';
+            btn.style.cssText = `
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #007BFF;
+            background: white;
+            color: #007BFF;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            `;
+
+            btn.addEventListener('click', () => {
+                //remove active class from all
+                filterContainer.querySelectorAll('.filter-btn').forEach(b => {
+                    b.style.background = 'white';
+                    b.style.color = '#007BFF';
+                });
+
+                //add active class to clicked
+                btn.style.background = '#007BFF';
+                btn.style.color = 'white';
+
+                //Filter todos
+                filterTodos(filter.toLowerCase());
+            });
+
+            //set All as default active
+            if (filter === 'All') {
+                btn.style.background = '#007BFF';
+                btn.style.color = 'white';
+            }
+
+            filterContainer.appendChild(btn);
+        });
+
+        //Insert before todo List
+        todoList.parentNode.insertBefore(filterContainer, todoList);
+}
+
+function filterTodos(filter) {
+    const allTodos = document.querySelectorAll('.todo-item');
+
+    allTodos.forEach(todoItem => {
+        const isCompleted = todoItem.classList.contains('completed');
+
+        switch(filter) {
+            case 'active':
+                todoItem.style.display = isCompleted ? 'none' : 'flex';
+                break;
+            case 'completed':
+                todoItem.style.display = isCompleted ? 'flex' : 'none';
+                break;
+            default: // 'all'
+                todoItem.style.display = 'flex';
+        }
+    });
+}
+// Call after init
+createFilterButtons();
