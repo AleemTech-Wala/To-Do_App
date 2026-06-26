@@ -78,46 +78,47 @@ function renderTodos(){
 
     //Render each todo
     todos.forEach(todo => {
-        const todoItem = createTodoElement(todo);
+        const todoItem = createEditableElement(todo);
+
         todoList.appendChild(todoItem);
     });
 }
 
-function createTodoElement(todo){
-    //create li element
-    const li = document.createElement('li');
-    li.className = 'todo-item';
-    li.setAttribute('data-id', todo.id);
+// function createTodoElement(todo){
+//     //create li element
+//     const li = document.createElement('li');
+//     li.className = 'todo-item';
+//     li.setAttribute('data-id', todo.id);
 
-    if(todo.completed){
-        li.classList.add('completed');
-    }
+//     if(todo.completed){
+//         li.classList.add('completed');
+//     }
 
-    //create checkbox
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.className = 'todo-checkbox';
-    checkbox.checked = todo.completed;
-    checkbox.addEventListener('change', () => toggleTodo(todo.id));
+//     //create checkbox
+//     const checkbox = document.createElement('input');
+//     checkbox.type = 'checkbox';
+//     checkbox.className = 'todo-checkbox';
+//     checkbox.checked = todo.completed;
+//     checkbox.addEventListener('change', () => toggleTodo(todo.id));
 
-    //create span for text
-    const textSpan = document.createElement('span');
-    textSpan.className = 'todo-text';
-    textSpan.textContent = todo.text;
+//     //create span for text
+//     const textSpan = document.createElement('span');
+//     textSpan.className = 'todo-text';
+//     textSpan.textContent = todo.text;
 
-    //create delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+//     //create delete button
+//     const deleteBtn = document.createElement('button');
+//     deleteBtn.className = 'delete-btn';
+//     deleteBtn.textContent = 'Delete';
+//     deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
 
-    //append elements to li
-    li.appendChild(checkbox);
-    li.appendChild(textSpan);
-    li.appendChild(deleteBtn);
+//     //append elements to li
+//     li.appendChild(checkbox);
+//     li.appendChild(textSpan);
+//     li.appendChild(deleteBtn);
 
-    return li;
-}
+//     return li;
+// }
 
 function toggleTodo(id){
     const todo = todos.find(t => t.id === id);
@@ -308,3 +309,78 @@ function filterTodos(filter) {
 }
 // Call after init
 createFilterButtons();
+
+
+
+//Edit Todos
+function createEditableElement(todo){
+    const li = document.createElement('li');
+    li.className = 'todo-item';
+    li.setAttribute('data-id', todo.id);
+
+    if(todo.completed){
+        li.classList.add('completed');
+    }
+
+    //checkbox
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'todo-checkbox';
+    checkbox.checked = todo.completed;
+    checkbox.addEventListener('change', () => toggleTodo(todo.id));
+
+    //Text span (double-click to edit)
+    const textSpan = document.createElement('span');
+    textSpan.className = 'todo-text';
+    textSpan.textContent = todo.text;
+    textSpan.addEventListener('dblclick', () => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = todo.text;
+        input.className = 'edit-input';
+        input.style.cssText = `
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+        `;
+
+        // Save karne ka function
+        const saveEdit = () => {
+            todo.text = input.value.trim() || todo.text; // khali na ho
+            textSpan.textContent = todo.text;
+            li.replaceChild(textSpan, input);
+        };
+
+        // Blur pe save karo
+        input.addEventListener('blur', saveEdit);
+
+        // Enter pe save karo, Escape pe cancel karo
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter'){
+                saveEdit();
+            }
+            if (e.key === 'Escape'){
+                li.replaceChild(textSpan, input); // bina save kiye wapis
+            }
+        });
+
+        li.replaceChild(input, textSpan);
+        input.focus();
+        input.select();
+    });
+
+    //Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+
+    //append elements to li
+    li.appendChild(checkbox);
+    li.appendChild(textSpan);
+    li.appendChild(deleteBtn);
+
+    return li;
+}
