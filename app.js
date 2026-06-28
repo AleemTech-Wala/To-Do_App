@@ -438,3 +438,37 @@ function getPriorityColor(priority) {
             return 'background: #95a5a6; color: white;';
     }
 }
+
+// Search/Filter
+function addSearchFeature() {
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search todos...';
+    searchInput.id = 'searchInput';
+    searchInput.style.cssText = `
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 15px;
+    `;
+    
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const todoItems = document.querySelectorAll('.todo-item');
+        
+        todoItems.forEach(item => {
+            const text = item.querySelector('.todo-text').textContent.toLowerCase();
+            if (text.includes(searchTerm)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+    
+    // Insert before input container
+    const inputContainer = document.querySelector('.input-container');
+    inputContainer.parentNode.insertBefore(searchInput, inputContainer);
+}
