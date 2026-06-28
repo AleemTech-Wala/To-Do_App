@@ -472,3 +472,46 @@ function addSearchFeature() {
     const inputContainer = document.querySelector('.input-container');
     inputContainer.parentNode.insertBefore(searchInput, inputContainer);
 }
+
+//  Due Date
+function addDueDateFeature() {
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.id = 'dueDateInput';
+    dateInput.style.cssText = `
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 16px;
+    `;
+    
+    // Add to input container
+    const inputContainer = document.querySelector('.input-container');
+    inputContainer.insertBefore(dateInput, addBtn);
+    
+    // In todo object add:
+    // dueDate: dateInput.value
+    
+    // Display due date in todo item
+    const dueDateSpan = document.createElement('span');
+    dueDateSpan.className = 'due-date';
+    dueDateSpan.textContent = `Due: ${formatDate(todo.dueDate)}`;
+    dueDateSpan.style.cssText = `
+        font-size: 12px;
+        color: #666;
+        margin-left: auto;
+    `;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'No due date';
+    
+    const date = new Date(dateString);
+    const today = new Date();
+    
+    if (date < today) {
+        return '⚠️ Overdue';
+    }
+    
+    return date.toLocaleDateString();
+}
