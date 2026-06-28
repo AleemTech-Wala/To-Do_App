@@ -384,3 +384,57 @@ function createEditableElement(todo){
 
     return li;
 }
+
+
+// Priority Levels
+function addPriorityFeature() {
+    // Add priority select to input container
+    const inputContainer = document.querySelector('.input-container');
+    
+    const prioritySelect = document.createElement('select');
+    prioritySelect.id = 'prioritySelect';
+    prioritySelect.style.cssText = `
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 16px;
+    `;
+    
+    const priorities = ['Low', 'Medium', 'High'];
+    priorities.forEach(priority => {
+        const option = document.createElement('option');
+        option.value = priority.toLowerCase();
+        option.textContent = priority;
+        if (priority === 'Medium') option.selected = true;
+        prioritySelect.appendChild(option);
+    });
+    
+    inputContainer.insertBefore(prioritySelect, addBtn);
+    
+    // Modify addTodo to include priority
+    // In todo object:
+    // priority: prioritySelect.value
+    
+    // Add priority badge to todo item
+    const priorityBadge = document.createElement('span');
+    priorityBadge.className = 'priority-badge';
+    priorityBadge.textContent = todo.priority.toUpperCase();
+    priorityBadge.style.cssText = `
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: bold;
+        ${getPriorityColor(todo.priority)}
+    `;
+}
+
+function getPriorityColor(priority) {
+    switch(priority) {
+        case 'high':
+            return 'background: #e74c3c; color: white;';
+        case 'medium':
+            return 'background: #f39c12; color: white;';
+        case 'low':
+            return 'background: #95a5a6; color: white;';
+    }
+}
